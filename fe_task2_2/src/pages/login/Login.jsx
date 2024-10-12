@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import "./Login.css";
-import axiosInstance from "../api/axiosInstance";
+import Auth from "../../api/apis/Auth";
+import { useSnackbar } from "notistack";
 
 const Login = () => {
+  const { enqueueSnackbar } = useSnackbar();
   const [formLogin, setFormLogin] = useState({
     username: "",
     password: "",
@@ -15,14 +17,55 @@ const Login = () => {
     });
   };
 
+  const handleReset = () => {
+    setFormLogin({
+      username: "",
+      password: "",
+    });
+  };
+
+  const saveToken = (token, username, role) => {
+    localStorage.setItem("accessToken", token);
+    localStorage.setItem("username", username);
+    localStorage.setItem("role", role);
+
+    const tokenExpiryTime = 5 * 60 * 1000; // 5 phút
+
+    setTimeout(() => {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("username");
+      console.log("Token đã bị xóa sau thời gian quy định.");
+    }, tokenExpiryTime);
+  };
+
+  useEffect(() => {
+    // Xóa dữ liệu trong localStorage khi trang được tải
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("username");
+    localStorage.removeItem("role");
+  }, []);
+
   const handleLogin = async () => {
     try {
-      const response = await axiosInstance.post("/api/auth/login", formLogin);
+      const response = await Auth.login(formLogin);
       console.log(response.data);
-      localStorage.setItem("accessToken", response.data.message.token);
-      localStorage.setItem("username", response.data.message.username);
+      console.log(response.data.message.role[0].authority);
+      saveToken(
+        response.data.message.token,
+        response.data.message.username,
+        response.data.message.role[0].authority
+      );
+      handleReset();
+      enqueueSnackbar("Đăng nhập thành công!", {
+        variant: "success",
+        autoHideDuration: 1000,
+        onExited: () => {
+          window.location.href = "/categories";
+        },
+      });
     } catch (error) {
-      console.error(error.response.data.status);
+      enqueueSnackbar(error.response.data.status, { variant: "error" });
+      handleReset();
     }
   };
 
@@ -34,7 +77,7 @@ const Login = () => {
             <div className="col-12 col-md-8 col-lg-6 col-xl-5">
               <div
                 className="card bg-dark text-white"
-                style={{ borderRadius: "1rem" }} // Sử dụng đối tượng cho style
+                style={{ borderRadius: "1rem" }}
               >
                 <div className="card-body p-5 text-center">
                   <div className="mb-md-5 mt-md-4 pb-5">
