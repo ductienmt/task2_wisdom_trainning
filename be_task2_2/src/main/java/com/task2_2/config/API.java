@@ -22,6 +22,12 @@ public class API {
             "/api/products/list",
     };
 
+    public static final String[] ADMIN_USER_API = {
+            "/api/categories/list",
+            "/api/categories/products",
+            "/api/products/list",
+    };
+
 
 
 }

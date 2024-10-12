@@ -1,6 +1,7 @@
 package com.task2_2.security.jwt;
 
 import com.task2_2.security.userPrincipal.UserPrincipal;
+import com.task2_2.utils.ResponseUtil;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -31,7 +32,7 @@ public class JwtProvider {
             Jwts.parser().setSigningKey(secretKey).build().parseClaimsJws(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
-            System.out.println("JWT token không hợp lệ: " + e.getMessage());
+            ResponseUtil.fail("JWT token không hợp lệ: " + e.getMessage());
         }
         return false;
     }

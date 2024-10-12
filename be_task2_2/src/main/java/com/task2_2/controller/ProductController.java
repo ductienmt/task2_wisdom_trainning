@@ -62,9 +62,9 @@ public class ProductController {
     }
 
     @PatchMapping("/category")
-    public ResponseEntity<?> updateCategory(@RequestParam("id") Integer id, @RequestParam("categoryId") Integer categoryId, @RequestBody ProductDTO updateCategory_product) {
+    public ResponseEntity<?> updateCategory(@RequestParam("id") Integer id, @RequestParam("categoryId") Integer categoryId, @RequestParam("newCategoryId") Integer newCategoryId) {
         try {
-            return ResponseUtil.success(this.productService.updateCategory(id, categoryId, updateCategory_product.getCategoryId()));
+            return ResponseUtil.success(this.productService.updateCategory(id, categoryId, newCategoryId));
         } catch (Exception e) {
             return ResponseUtil.fail(e.getMessage());
         }

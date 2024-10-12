@@ -3,6 +3,7 @@ package com.task2_2.config;
 import com.task2_2.security.jwt.JwtEntryPoint;
 import com.task2_2.security.jwt.JwtTokenFilter;
 import com.task2_2.security.userPrincipal.UserDetailsServiceImpl;
+import com.task2_2.utils.ResponseUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -24,7 +25,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 
 @Configuration
@@ -86,6 +86,7 @@ public class SecurityConfig {
                 .httpBasic(Customizer.withDefaults())
                 .authorizeHttpRequests(authozire -> authozire
                         .requestMatchers(API.PUBLIC_API).permitAll()
+                        .requestMatchers(API.ADMIN_USER_API).hasAnyAuthority("admin", "user")
                         .requestMatchers(API.ADMIN_API).hasAnyAuthority("admin")
                         .requestMatchers(API.USER_API).hasAnyAuthority("user")
                         .anyRequest().authenticated());
