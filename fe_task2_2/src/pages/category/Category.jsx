@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Link, useNavigate } from "react-router-dom";
 import CategoryService from "../../api/apis/Category";
 import { useSnackbar } from "notistack";
+import { CategoryTable } from "../../components/category/CategoryTable";
 
 const Category = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -173,51 +174,14 @@ const Category = () => {
         </div>
       )}
 
-      <div>
-        <table className="table table-striped">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Tên sản phẩm</th>
-              <th>Mô tả</th>
-              <th>Thao tác</th>
-            </tr>
-          </thead>
-          <tbody>
-            {categories.map((category) => (
-              <tr key={category.id}>
-                <td>{category.id}</td>
-                <td>{category.categoryName}</td>
-                <td>{category.description}</td>
-                <td>
-                  {isAdmin && (
-                    <>
-                      <button
-                        className="btn btn-primary me-2"
-                        onClick={() => handleEdit(category)}
-                      >
-                        Sửa
-                      </button>
-                      <button
-                        className="btn btn-danger"
-                        onClick={() => handleDelete(category.id)}
-                      >
-                        Xóa
-                      </button>
-                    </>
-                  )}
-                  <button
-                    className="btn btn-warning"
-                    onClick={() => handleGetProductsByCategory(category.id)}
-                  >
-                    Xem sản phẩm
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <CategoryTable
+        categories={categories}
+        isAdmin={isAdmin}
+        handleEdit={handleEdit}
+        handleDelete={handleDelete}
+        handleGetProductsByCategory={handleGetProductsByCategory}
+      />
+
       <div className="d-flex justify-content-between">
         <button className="btn btn-success" onClick={() => handleLogout()}>
           Logout

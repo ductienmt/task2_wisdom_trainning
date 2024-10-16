@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ProductService from "../../api/apis/Product";
-import { formatCurrency } from "../../shared/constants/FormatMoney";
 import { Link, useLocation } from "react-router-dom";
 import { useSnackbar } from "notistack";
+import { ProductTable } from "../../components/product/ProductTable";
 
 const Product = () => {
   const location = useLocation();
@@ -184,49 +184,12 @@ const Product = () => {
             </form>
           </div>
         )}
-
-        <div className="table-product">
-          <h1>Danh sách sản phẩm</h1>
-          <table className="table table-striped table-bordered">
-            <thead>
-              <tr>
-                <th>Id</th>
-                <th>Tên</th>
-                <th>Giá</th>
-                <th>Mô tả</th>
-                {isAdmin && <th>Hành động</th>}
-              </tr>
-            </thead>
-            <tbody>
-              {products.map((product) => (
-                <tr key={product.id}>
-                  <td>{product.id}</td>
-                  <td>{product.productName}</td>
-                  <td>{formatCurrency(product.price)}</td>
-                  <td>{product.description}</td>
-                  {isAdmin && (
-                    <td>
-                      <button
-                        type="button"
-                        className="btn btn-info me-2"
-                        onClick={() => handleEdit(product)}
-                      >
-                        Sửa
-                      </button>
-                      <button
-                        type="button"
-                        className="btn btn-danger"
-                        onClick={() => handleDelete(product.id)}
-                      >
-                        Xóa
-                      </button>
-                    </td>
-                  )}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <ProductTable
+          products={products}
+          isAdmin={isAdmin}
+          handleEdit={handleEdit}
+          handleDelete={handleDelete}
+        />
         <div className="d-flex justify-content-between">
           <Link className="btn btn-primary" to={"/categories"}>
             Quay về

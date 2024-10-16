@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "./Login.css";
 import Auth from "../../api/apis/Auth";
 import { useSnackbar } from "notistack";
+import { handleToken } from "../../shared/constants/HandleToken";
 
 const Login = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -24,25 +25,13 @@ const Login = () => {
     });
   };
 
-  const saveToken = (token, username, role) => {
-    localStorage.setItem("accessToken", token);
-    localStorage.setItem("username", username);
-    localStorage.setItem("role", role);
-
-    const tokenExpiryTime = 5 * 60 * 1000; // 5 phút
-
-    setTimeout(() => {
+  useEffect(() => {
+    if (handleToken.isTokenExpired()) {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("username");
-      console.log("Token đã bị xóa sau thời gian quy định.");
-    }, tokenExpiryTime);
-  };
-
-  useEffect(() => {
-    // Xóa dữ liệu trong localStorage khi trang được tải
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("username");
-    localStorage.removeItem("role");
+      localStorage.removeItem("role");
+      localStorage.removeItem("tokenExpiry");
+    }
   }, []);
 
   const handleLogin = async () => {
@@ -50,7 +39,7 @@ const Login = () => {
       const response = await Auth.login(formLogin);
       console.log(response.data);
       console.log(response.data.message.role[0].authority);
-      saveToken(
+      handleToken.saveToken(
         response.data.message.token,
         response.data.message.username,
         response.data.message.role[0].authority
